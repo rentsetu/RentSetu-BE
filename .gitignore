@@ -1,0 +1,43 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Uploads and temp files
+uploads/
+tmp/
+.cache/
+dist/
+
+# VSCode
+.vscode/
+
+# dotenv backup
+.env.local
+.env.development
+.env.production
+.env.test
+
+# IDE folders
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Swagger UI generated cache (optional)
+swagger-ui-dist/
