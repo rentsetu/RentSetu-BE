@@ -53,7 +53,7 @@ rentsetu-backend/
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/rentsetu/rentsetu-backend.git
+   git clone https://github.com/rentsetu/RentSetu-BE.git
    cd rentsetu-backend
    ```
 
