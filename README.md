@@ -193,7 +193,7 @@ MIT © 2025
 ###  Maintained By
 
 Made with ❤️ by the **RentSetu Development Team**
-Contact: [rentsetutech@gmail.com](mailto:rentsetu.tech@gmail.com)
+Contact: [rentsetu.tech@gmail.com](mailto:rentsetu.tech@gmail.com)
 
 ---
 
