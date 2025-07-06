@@ -1,10 +1,8 @@
 ---
-
 # RentSetu Backend
 
 > **A complete Node.js + Express backend for managing property listings, user authentication, document uploads, and admin control.**
 > Built with ❤️ by the **RentSetu Development Team**
-
 ---
 
 ###  Tech Stack
@@ -195,8 +193,8 @@ MIT © 2025
 ###  Maintained By
 
 Made with ❤️ by the **RentSetu Development Team**
-Contact: [rentsetutech@gmail.com](mailto:rentsetutech@gmail.com)
+Contact: [rentsetutech@gmail.com](mailto:rentsetu.tech@gmail.com)
 
 ---
 
-Would you like this `README.md` delivered in a `.zip` or added directly into your project folder?
+
