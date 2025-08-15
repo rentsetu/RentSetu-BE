@@ -1,35 +1,46 @@
 const Property = require('../models/Property');
 const cloudinary = require('../utils/cloudinary');
-const fs = require('fs');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 
 exports.createProperty = async (req, res) => {
   try {
     const body = req.body;
-    const files = req.files;
+    const files = req.files; // from multer.fields()
     const uploads = {};
 
-    // Upload documents to Cloudinary
+    // Upload single-document fields to Cloudinary
     for (let key of ['identityProof', 'ownershipProof', 'floorPlan']) {
-      if (files[key]) {
-        const result = await cloudinary.uploader.upload(files[key][0].path, {
-          folder: `rentsetu/${key}`
+      if (files[key] && files[key][0]) {
+        const uploadPromise = new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: `rentsetu/${key}` },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result.secure_url);
+            }
+          );
+          stream.end(files[key][0].buffer);
         });
-        uploads[key] = result.secure_url;
-        fs.unlinkSync(files[key][0].path);
+        uploads[key] = await uploadPromise;
       }
     }
 
-    // Upload multiple property photos
+    // Upload property photos
     const photoLinks = [];
     if (files.propertyPhotos) {
       for (let file of files.propertyPhotos) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'rentsetu/propertyPhotos'
+        const uploadPromise = new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'rentsetu/propertyPhotos' },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result.secure_url);
+            }
+          );
+          stream.end(file.buffer);
         });
-        photoLinks.push(result.secure_url);
-        fs.unlinkSync(file.path);
+        photoLinks.push(await uploadPromise);
       }
     }
 
@@ -79,7 +90,7 @@ exports.createProperty = async (req, res) => {
 
     await property.save();
 
-    // Emailing
+    // Send admin email
     const user = await User.findById(req.user.id);
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -89,7 +100,6 @@ exports.createProperty = async (req, res) => {
       }
     });
 
-    // Admin notification
     await transporter.sendMail({
       from: `"RentSetu Bot" <${process.env.EMAIL}>`,
       to: process.env.EMAIL,
@@ -104,7 +114,7 @@ exports.createProperty = async (req, res) => {
       `
     });
 
-    // Notify user if opted
+    // Send confirmation email to user if opted in
     if (user.wantsPromotions) {
       await transporter.sendMail({
         from: `"RentSetu" <${process.env.EMAIL}>`,
@@ -119,9 +129,18 @@ exports.createProperty = async (req, res) => {
     }
 
     res.status(201).json({ message: 'Property listed successfully', property });
-
   } catch (err) {
     console.error('❌ Listing Error:', err);
     res.status(500).json({ error: 'Failed to upload property' });
+  }
+};
+
+exports.getAllProperties = async (req, res) => {
+  try {
+    const properties = await Property.find().populate('listedBy', 'name email');
+    res.status(200).json(properties);
+  } catch (err) {
+    console.error('❌ Error fetching properties:', err);
+    res.status(500).json({ error: 'Failed to fetch properties' });
   }
 };
